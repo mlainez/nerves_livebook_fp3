@@ -44,7 +44,7 @@ config :nerves_livebook_fp3,
   notebooks_source: "/srv/livebook/notebooks",
   notebooks_dest: "/data/livebook/notebooks"
 
-# Pre-baked model paths. ModelHub's app config takes a list of
+# Pre-baked model paths. NervesModelHub's app config takes a list of
 # {id, [source: ..., path: ...]} entries. We point `source` at the
 # baked-in /srv path so the on-first-boot logic copies (not
 # downloads) into /data/models/.
@@ -92,9 +92,9 @@ config :nerves_ai, :models, [
 
 # First-boot F2FS grow of the /root partition (idempotent — the
 # resizer reports :already_grown once the FS fills the partition).
-# Keys and app namespace must match FwupDataResize.run/1, which
-# reads `config :fwup_data_resize, :config`.
-config :fwup_data_resize, :config,
+# Keys and app namespace must match NervesDataResize.run/1, which
+# reads `config :nerves_data_resize, :config`.
+config :nerves_data_resize, :config,
   partition: "/dev/mmcblk0p62p3",
   mount_point: "/root",
   mount_opts: "nodev"

@@ -47,8 +47,8 @@ defmodule NervesLivebookFP3.MixProject do
         :fp3_modem,
         :ex_nfc,
         :ex_location,
-        # The AI stack: this pulls arm_ai, nx_arm, infer_*, model_hub,
-        # cpu_governor, fwup_data_resize via nerves_ai's mix.exs.
+        # The AI stack: this pulls arm_ai, nx_arm, infer_*, nerves_model_hub,
+        # cpu_governor, nerves_data_resize via nerves_ai's mix.exs.
         :nerves_ai
       ]
     ]

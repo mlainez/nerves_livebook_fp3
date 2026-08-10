@@ -104,8 +104,8 @@ nerves_livebook_fp3 (this firmware)
 │   ├── infer_vision         (YOLO / OCR / Face / generic ONNX)
 │   ├── infer_audio          (Silero VAD / Piper TTS)
 │   ├── cpu_governor         (perf-cluster scope + topology)
-│   ├── model_hub            (first-boot model sync)
-│   └── fwup_data_resize     (first-boot F2FS grow)
+│   ├── nerves_model_hub            (first-boot model sync)
+│   └── nerves_data_resize     (first-boot F2FS grow)
 ├── ex_nfc / ex_location / ex_audio / fp3_camera / fp3_modem
 ├── ex_qcom_smgr (IIO sensors via ADSP)
 └── livebook + kino + kino_vega_lite + kino_maplibre + kino_bumblebee

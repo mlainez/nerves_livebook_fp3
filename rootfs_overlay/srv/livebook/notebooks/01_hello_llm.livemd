@@ -1,0 +1,97 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# 01 — Hello LLM (TinyLlama chat)
+
+```elixir
+# Already installed in the firmware. Just verify we can see them.
+Application.ensure_all_started(:arm_ai)
+Application.ensure_all_started(:tokenizers)
+```
+
+## What this notebook does
+
+Loads **TinyLlama 1.1B Chat** (a 1.1B-parameter transformer
+quantised to 4 bits — about 700 MB on disk) and runs a single
+generation from a prompt. The whole pipeline runs locally on
+the phone's NEON-tuned CPU path, no network required.
+
+Expected speed on FP3+ hardware: **~4–5 tokens/sec** for the warm
+case, ~7–10 s first-call latency while the model loads.
+
+## Load the model
+
+```elixir
+{:ok, model} = ArmAI.LlamaCandle.load("/data/models/tinyllama.gguf")
+```
+
+```elixir
+{:ok, tokenizer} = Tokenizers.Tokenizer.from_file("/data/models/tinyllama-tokenizer.json")
+```
+
+## Compose a prompt
+
+TinyLlama-Chat expects the ChatML template. Edit the `user`
+variable below and re-evaluate.
+
+```elixir
+user = "What three things should I see in Brussels?"
+
+system = "You are a helpful, concise travel guide."
+
+prompt = """
+<|system|>
+#{system}</s>
+<|user|>
+#{user}</s>
+<|assistant|>
+"""
+
+{:ok, encoded} = Tokenizers.Tokenizer.encode(tokenizer, prompt)
+prompt_tokens = Tokenizers.Encoding.get_ids(encoded)
+IO.puts("Prompt is #{length(prompt_tokens)} tokens.")
+```
+
+## Generate
+
+Run the generation under the performance CPU governor so the
+NEON kernels get the full clock budget for the burst, then drop
+back to schedutil so the phone doesn't cook.
+
+```elixir
+{tokens, stats} =
+  CpuGovernor.Performance.with_performance(fn ->
+    ArmAI.LlamaCandle.generate(model,
+      prompt_tokens: prompt_tokens,
+      max_new: 96,
+      stop_tokens: [2]  # </s>
+    )
+  end)
+
+{:ok, text} = Tokenizers.Tokenizer.decode(tokenizer, tokens)
+
+IO.puts(text)
+IO.puts("")
+IO.puts("--- stats ---")
+IO.inspect(stats)
+```
+
+## Try your own prompt
+
+Change `user` above and re-evaluate the prompt + generate cells.
+Subsequent runs reuse the already-loaded model and tokenizer,
+so they're noticeably faster than the first one.
+
+## What's happening under the hood
+
+* `ArmAI.LlamaCandle` is the binary-API wrapper around
+  [`candle-transformers`](https://github.com/huggingface/candle)
+  (Rust, NEON-tuned matmul + dequant kernels).
+* `Tokenizers` is the HuggingFace Rust tokenizer — fast and
+  byte-accurate.
+* `CpuGovernor.Performance.with_performance/1` scopes the CPU
+  governor to `performance` on the big-cluster cores for the
+  duration of the function call.
+
+If you want to swap models, drop another `.gguf` into
+`/data/models/` and adjust the path. The TinyLlama family
+(Phi-2 Q4, SmolLM-1.7B Q4, etc.) work with the same code.

@@ -1,0 +1,17 @@
+/_build/
+/cover/
+/deps/
+/doc/
+/.fetch
+erl_crash.dump
+*.ez
+*.beam
+/tmp/
+
+# Nerves firmware output
+*.fw
+*.img
+
+# Workshop models — ~3.2 GB, fetched by scripts/fetch_models.sh.
+# Baked into the firmware image at build time; never committed.
+/rootfs_overlay/srv/models/

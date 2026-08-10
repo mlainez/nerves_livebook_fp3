@@ -79,23 +79,23 @@ defmodule NervesLivebookFP3.MixProject do
       {:kino_bumblebee, "~> 0.5"},
 
       # ---------------- AI stack ----------------
-      {:nerves_ai, path: "../nerves_ai"},
+      {:nerves_ai, path: "../nerves_ai", override: true},
 
       # ---------------- FP3 hardware userspace ----------------
       {:ex_rmtfs, github: "mlainez/ex_rmtfs"},
-      {:ex_tqftpserv, path: "../ex_tqftpserv"},
-      {:ex_hexagonrpcd, path: "../ex_hexagonrpcd"},
-      {:ex_hexagonfs, path: "../ex_hexagonfs"},
-      {:ex_remoteproc, path: "../ex_remoteproc"},
-      {:ex_qcom_smgr, path: "../ex_qcom_smgr"},
-      {:ex_qbootctl, path: "../ex_qbootctl"},
-      {:ex_audio, path: "../ex_audio"},
-      {:fp3_camera, path: "../fp3_camera"},
+      {:ex_tqftpserv, path: "../ex_tqftpserv", override: true},
+      {:ex_hexagonrpcd, path: "../ex_hexagonrpcd", override: true},
+      {:ex_hexagonfs, path: "../ex_hexagonfs", override: true},
+      {:ex_remoteproc, path: "../ex_remoteproc", override: true},
+      {:ex_qcom_smgr, path: "../ex_qcom_smgr", override: true},
+      {:ex_qbootctl, path: "../ex_qbootctl", override: true},
+      {:ex_audio, path: "../ex_audio", override: true},
+      {:fp3_camera, path: "../fp3_camera", override: true},
       {:qmi, path: "../qmi", override: true},
-      {:vintage_net_qmi, path: "../vintage_net_qmi"},
-      {:fp3_modem, path: "../fp3_modem"},
-      {:ex_nfc, path: "../ex_nfc"},
-      {:ex_location, path: "../ex_location"},
+      {:vintage_net_qmi, path: "../vintage_net_qmi", override: true},
+      {:fp3_modem, path: "../fp3_modem", override: true},
+      {:ex_nfc, path: "../ex_nfc", override: true},
+      {:ex_location, path: "../ex_location", override: true},
 
       # ---------------- The nerves_system_fp3 (compiled here) ----------------
       {:nerves_system_fp3,

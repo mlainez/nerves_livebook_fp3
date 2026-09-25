@@ -40,8 +40,16 @@ config :fp3_modem,
 # interfaces so attendees can reach it from any connected network.
 config :livebook, :iframe_port, 4001
 
+# Not a real secret: this is a public repo with authentication
+# disabled, so there's nothing secret_key_base is actually protecting
+# here — it only exists because Phoenix requires >= 64 bytes. Derived
+# (not hardcoded) so it stays visibly non-sensitive and builds stay
+# deterministic (same input, same firmware bytes).
 config :livebook, LivebookWeb.Endpoint,
   url: [host: "nerves.local", port: 80],
   http: [port: 4000, ip: {0, 0, 0, 0}],
   server: true,
-  secret_key_base: "REPLACE_ME_WITH_AT_LEAST_64_BYTES_FOR_PROD_DEPLOYMENT_SECURITY"
+  secret_key_base:
+    :sha512
+    |> :crypto.hash("nerves_livebook_fp3-not-a-secret-key-base")
+    |> Base.encode64()

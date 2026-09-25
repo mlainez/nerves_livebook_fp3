@@ -51,6 +51,13 @@ Everything works offline — models are baked into the firmware.
 
 ## For the workshop organiser
 
+### Prerequisites
+
+* A Rust toolchain (`rustc`/`cargo`), plus the `aarch64-unknown-linux-gnu`
+  target (`rustup target add aarch64-unknown-linux-gnu`). `arm_ai` has
+  no precompiled-NIF release yet, so its Rust NIF always builds from
+  source — including when cross-compiling the real firmware.
+
 ### One-time setup on host
 
 ```sh

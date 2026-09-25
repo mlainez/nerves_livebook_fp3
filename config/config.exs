@@ -21,11 +21,13 @@ config :logger, RingLogger,
 
 # Livebook configuration — token-less for the workshop (the device
 # is the trust boundary; you have to be on the local network).
+#
+# default_runtime / default_app_runtime live in config/runtime.exs:
+# Livebook.Runtime.Embedded.new() calls into :livebook, which isn't
+# compiled yet when config.exs runs.
 config :livebook,
   app_service_name: "nerves-livebook-fp3",
   authentication: :disabled,
-  default_runtime: Livebook.Runtime.Embedded.new(),
-  default_app_runtime: Livebook.Runtime.Embedded.new(),
   notebook_directory: "/data/livebook/notebooks",
   apps_path: "/data/livebook/apps",
   cookie: :"nerves_livebook_fp3"

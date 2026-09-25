@@ -3,7 +3,6 @@ defmodule NervesLivebookFP3.MixProject do
 
   @app :nerves_livebook_fp3
   @version "0.1.0"
-  @all_targets [:nerves_system_fp3]
 
   # Deterministic builds — same input, same firmware bytes.
   System.put_env("ERL_COMPILER_OPTIONS", "deterministic")
@@ -60,7 +59,7 @@ defmodule NervesLivebookFP3.MixProject do
       {:nerves, "~> 1.10", runtime: false},
       {:shoehorn, "~> 0.9.1"},
       {:ring_logger, "~> 0.11.0"},
-      {:toolshed, "~> 0.4.0"},
+      {:toolshed, "~> 0.5.0"},
       {:nerves_uevent, "~> 0.1.7", override: true},
       {:nerves_runtime, "~> 0.13.0"},
       {:nerves_pack, "~> 0.7"},
@@ -79,6 +78,10 @@ defmodule NervesLivebookFP3.MixProject do
       {:kino_bumblebee, "~> 0.5"},
 
       # ---------------- AI stack ----------------
+      # arm_ai has no precompiled-NIF release yet, so RustlerPrecompiled
+      # always force-builds from source; it needs rustler declared
+      # directly here since it's only an optional dep of nerves_ai.
+      {:rustler, "~> 0.36", optional: true},
       {:nerves_ai, github: "mlainez/nerves_ai", override: true},
 
       # ---------------- FP3 hardware userspace ----------------

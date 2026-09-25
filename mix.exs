@@ -79,27 +79,28 @@ defmodule NervesLivebookFP3.MixProject do
       {:kino_bumblebee, "~> 0.5"},
 
       # ---------------- AI stack ----------------
-      {:nerves_ai, path: "../nerves_ai", override: true},
+      {:nerves_ai, github: "mlainez/nerves_ai", override: true},
 
       # ---------------- FP3 hardware userspace ----------------
       {:ex_rmtfs, github: "mlainez/ex_rmtfs"},
-      {:ex_tqftpserv, path: "../ex_tqftpserv", override: true},
-      {:ex_hexagonrpcd, path: "../ex_hexagonrpcd", override: true},
-      {:ex_hexagonfs, path: "../ex_hexagonfs", override: true},
-      {:ex_remoteproc, path: "../ex_remoteproc", override: true},
-      {:ex_qcom_smgr, path: "../ex_qcom_smgr", override: true},
-      {:ex_qbootctl, path: "../ex_qbootctl", override: true},
-      {:ex_audio, path: "../ex_audio", override: true},
-      {:fp3_camera, path: "../fp3_camera", override: true},
-      {:qmi, path: "../qmi", override: true},
-      {:vintage_net_qmi, path: "../vintage_net_qmi", override: true},
-      {:fp3_modem, path: "../fp3_modem", override: true},
-      {:ex_nfc, path: "../ex_nfc", override: true},
-      {:ex_location, path: "../ex_location", override: true},
+      {:ex_tqftpserv, github: "mlainez/ex_tqftpserv", override: true},
+      {:ex_hexagonrpcd, github: "mlainez/ex_hexagonrpcd", override: true},
+      {:ex_hexagonfs, github: "mlainez/ex_hexagonfs", override: true},
+      {:ex_remoteproc, github: "mlainez/ex_remoteproc", override: true},
+      {:ex_qcom_smgr, github: "mlainez/ex_qcom_smgr", override: true},
+      {:ex_qbootctl, github: "mlainez/ex_qbootctl", override: true},
+      {:ex_audio, github: "mlainez/ex_audio", override: true},
+      {:fp3_camera, github: "mlainez/fp3_camera", override: true},
+      {:qmi, github: "mlainez/qmi", branch: "qrtr-transport", override: true},
+      {:vintage_net_qmi,
+       github: "mlainez/vintage_net_qmi", branch: "qrtr-transport", override: true},
+      {:fp3_modem, github: "mlainez/fp3_modem", override: true},
+      {:ex_nfc, github: "mlainez/ex_nfc", override: true},
+      {:ex_location, github: "mlainez/ex_location", override: true},
 
       # ---------------- The nerves_system_fp3 (compiled here) ----------------
       {:nerves_system_fp3,
-       path: "../nerves_system_fp3",
+       github: "mlainez/nerves_system_fp3",
        runtime: false,
        targets: :nerves_system_fp3,
        nerves: [compile: true]}

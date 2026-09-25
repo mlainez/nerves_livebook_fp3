@@ -33,18 +33,23 @@ fetch \
   "https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0/resolve/main/tokenizer.json" \
   "tinyllama-tokenizer.json"
 
-# Whisper tiny.en quantized (~40 MB)
+# Whisper tiny.en quantized (~30 MB) — ggerganov/whisper.cpp's own
+# GGUF conversion, the format candle-transformers' quantized Whisper
+# loader expects (the distil-whisper GGUF this used to point at is
+# gone: the HF repo now 401s).
 fetch \
-  "https://huggingface.co/distil-whisper/distil-whisper-tiny.en-q4_0-gguf/resolve/main/ggml-model.gguf" \
-  "whisper-tiny-q4_0.gguf"
+  "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en-q5_1.bin" \
+  "whisper-tiny-q5_1.bin"
 
 fetch \
   "https://huggingface.co/openai/whisper-tiny.en/resolve/main/tokenizer.json" \
   "whisper-tokenizer.json"
 
-# Mel filterbanks (Whisper-compatible; small, ~80 KB)
+# Mel filterbanks: 80 mel bins x 201 fft bins, raw little-endian f32
+# (64320 bytes) — candle's own whisper example ships this exact file.
+# (The Xenova/whisper-web space this used to point at dropped it.)
 fetch \
-  "https://huggingface.co/spaces/Xenova/whisper-web/resolve/main/melfilters.bin" \
+  "https://raw.githubusercontent.com/huggingface/candle/main/candle-examples/examples/whisper/melfilters.bytes" \
   "whisper-mel-filters.bin"
 
 # YOLOv5n in ONNX (~7.5 MB)

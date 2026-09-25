@@ -19,8 +19,51 @@ config :logger, RingLogger,
   max_size: 1024,
   application_levels: %{ssh: :error}
 
-# Livebook configuration — token-less for the workshop (the device
-# is the trust boundary; you have to be on the local network).
+# Livebook reads its own config/config.exs defaults only when it's the
+# root Mix project — as a dependency here, none of that applies, and
+# several of its modules read compile-time config (Application.compile_env
+# / fetch_env!) that would otherwise be missing entirely and crash
+# `mix compile`. Replicate its defaults (deps/livebook/config/config.exs)
+# so it boots the way it would standalone; our own overrides come after
+# and take precedence per key.
+config :livebook, LivebookWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
+  url: [host: "localhost", path: "/"],
+  pubsub_server: Livebook.PubSub,
+  live_view: [signing_salt: "livebook"],
+  drainer: [shutdown: 1000],
+  render_errors: [formats: [html: LivebookWeb.ErrorHTML], layout: false]
+
+config :phoenix, :json_library, JSON
+
+config :mime, :types, %{
+  "audio/m4a" => ["m4a"],
+  "text/plain" => ["livemd"]
+}
+
+config :livebook,
+  agent_name: "default",
+  allowed_uri_schemes: [],
+  app_service_url: nil,
+  apps_banner: nil,
+  aws_credentials: false,
+  feature_flags: [],
+  force_ssl_host: nil,
+  learn_notebooks: [],
+  plugs: [],
+  rewrite_on: [],
+  shutdown_callback: nil,
+  teams_auth: nil,
+  teams_url: "https://teams.livebook.dev",
+  github_release_info: %{repo: "livebook-dev/livebook", version: "0.19.10"},
+  update_instructions_url: nil,
+  within_iframe: false,
+  k8s_kubeconfig_pipeline: Kubereq.Kubeconfig.Default
+
+config :livebook, Livebook.Apps.Manager, retry_backoff_base_ms: 5_000
+
+# Workshop-specific overrides — token-less (the device is the trust
+# boundary; you have to be on the local network).
 #
 # default_runtime / default_app_runtime live in config/runtime.exs:
 # Livebook.Runtime.Embedded.new() calls into :livebook, which isn't
@@ -28,9 +71,9 @@ config :logger, RingLogger,
 config :livebook,
   app_service_name: "nerves-livebook-fp3",
   authentication: :disabled,
-  notebook_directory: "/data/livebook/notebooks",
+  home: "/data/livebook/notebooks",
   apps_path: "/data/livebook/apps",
-  cookie: :"nerves_livebook_fp3"
+  cookie: :nerves_livebook_fp3
 
 # Where the workshop notebooks live on disk. We bake them into
 # /srv/livebook/notebooks/ in the rootfs overlay; on first boot
@@ -50,7 +93,7 @@ config :nerves_livebook_fp3,
 # {id, [source: ..., path: ...]} entries. We point `source` at the
 # baked-in /srv path so the on-first-boot logic copies (not
 # downloads) into /data/models/.
-config :nerves_ai, :models, [
+config :nerves_ai, :models,
   tinyllama: [
     source: {:file, "/srv/models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"},
     path: "/data/models/tinyllama.gguf"
@@ -60,7 +103,7 @@ config :nerves_ai, :models, [
     path: "/data/models/tinyllama-tokenizer.json"
   ],
   whisper_tiny: [
-    source: {:file, "/srv/models/whisper-tiny-q4_0.gguf"},
+    source: {:file, "/srv/models/whisper-tiny-q5_1.bin"},
     path: "/data/models/whisper-tiny.gguf"
   ],
   whisper_tokenizer: [
@@ -90,7 +133,6 @@ config :nerves_ai, :models, [
     source: {:file, "/srv/models/en_US-amy-medium.onnx.json"},
     path: "/data/models/en_US-amy-medium.onnx.json"
   ]
-]
 
 # First-boot F2FS grow of the /root partition (idempotent — the
 # resizer reports :already_grown once the FS fills the partition).

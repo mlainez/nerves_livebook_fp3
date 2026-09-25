@@ -30,7 +30,9 @@ defmodule NervesLivebookFP3.Application do
   end
 
   defp sync_notebooks do
-    source = Application.get_env(:nerves_livebook_fp3, :notebooks_source, "/srv/livebook/notebooks")
+    source =
+      Application.get_env(:nerves_livebook_fp3, :notebooks_source, "/srv/livebook/notebooks")
+
     dest = Application.get_env(:nerves_livebook_fp3, :notebooks_dest, "/data/livebook/notebooks")
 
     cond do

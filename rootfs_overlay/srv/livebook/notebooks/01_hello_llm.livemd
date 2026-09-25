@@ -53,19 +53,17 @@ IO.puts("Prompt is #{length(prompt_tokens)} tokens.")
 
 ## Generate
 
-Run the generation under the performance CPU governor so the
-NEON kernels get the full clock budget for the burst, then drop
-back to schedutil so the phone doesn't cook.
+`generate/2` runs under the performance CPU governor by default
+(so the NEON kernels get the full clock budget for the burst, then
+drop back to schedutil so the phone doesn't cook) — pass
+`performance_governor: false` to opt out.
 
 ```elixir
 {tokens, stats} =
-  CpuGovernor.Performance.with_performance(fn ->
-    ArmAI.LlamaCandle.generate(model,
-      prompt_tokens: prompt_tokens,
-      max_new: 96,
-      stop_tokens: [2]  # </s>
-    )
-  end)
+  ArmAI.LlamaCandle.generate(model,
+    prompt_tokens: prompt_tokens,
+    max_new: 96
+  )
 
 {:ok, text} = Tokenizers.Tokenizer.decode(tokenizer, tokens)
 
@@ -88,9 +86,9 @@ so they're noticeably faster than the first one.
   (Rust, NEON-tuned matmul + dequant kernels).
 * `Tokenizers` is the HuggingFace Rust tokenizer — fast and
   byte-accurate.
-* `CpuGovernor.Performance.with_performance/1` scopes the CPU
-  governor to `performance` on the big-cluster cores for the
-  duration of the function call.
+* `ArmAI.LlamaCandle.generate/2` scopes the CPU governor to
+  `performance` on the big-cluster cores for the duration of the
+  call, via `CpuGovernor.Performance.with_performance/1`.
 
 If you want to swap models, drop another `.gguf` into
 `/data/models/` and adjust the path. The TinyLlama family

@@ -73,16 +73,22 @@ for tool in fastboot curl sha256sum; do
   command -v "$tool" >/dev/null || die "$tool is not installed"
 done
 
+# Check a file's SHA-256. Compares the hash as a string because the
+# sha256sum that ships with macOS doesn't take GNU's --check --status.
+sha_ok() {
+  [ -f "$2" ] && [ "$(sha256sum "$2" | awk '{print $1}')" = "$1" ]
+}
+
 # Download a pinned file into the cache and check its hash.
 fetch() {
   local url="$1" sha="$2" dest="$CACHE_DIR/$3"
   mkdir -p "$CACHE_DIR"
-  if [ ! -f "$dest" ] || ! echo "$sha  $dest" | sha256sum --check --status; then
+  if ! sha_ok "$sha" "$dest"; then
     echo "Downloading $url"
     curl -fsSL -o "$dest.part" "$url"
     mv "$dest.part" "$dest"
   fi
-  echo "$sha  $dest" | sha256sum --check --status || die "checksum mismatch for $dest"
+  sha_ok "$sha" "$dest" || die "checksum mismatch for $dest"
 }
 
 # fastboot prints variables on stderr as "name: value". An unknown
@@ -106,7 +112,7 @@ wait_for_phone() {
       serial=$(fastboot devices | awk -v s="$SERIAL" '$1 == s {print $1}')
     else
       serial=$(fastboot devices | awk '{print $1}' | while read -r s; do
-        case "$FLASHED" in *" $s "*) ;; *) echo "$s" ;; esac
+        case "$FLASHED" in (*" $s "*) ;; (*) echo "$s" ;; esac
       done | head -n1)
     fi
     if [ -n "$serial" ]; then

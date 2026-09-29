@@ -146,6 +146,22 @@ stack. `mix hex.audit` reports advisories against several of them
 without breaking Livebook's own constraints. Update Livebook when a
 release with patched dependencies is available.
 
+## Updating the image
+If you want to change this livebook image, eg adding some hex packages, you will need to rebuild it.
+Set your `MIX_TARGET` to `nerves_system_fp3` and run `mix deps.get`, followed by either `mix firmware` or `mix firmware.image`.
+You will need to run the latter to generate a `.img` file to flash the device with `fastboot`.
+If you are already running Nerves on the device, you can use `mix firmware`, followed by `mix upload nerves.local`.
+If `mix upload` fails with a message `subsystem request failed on channel 0`, this may be caused by a bug in [OTP 29](https://github.com/erlang/otp/issues/11586). To resolve this you have to ensure your SSH client does not send `Env`-vars.
+You can add the following to your `~/.ssh/config`:
+
+If you have a `Host *` config then change it to `Host * !nerves.local !nerves-*.local`, then add:
+```
+Host nerves.local nerves-*.local
+  SendEnv -*
+```
+
+Then try again.
+
 ## License
 
 Apache-2.0.
